@@ -25,11 +25,23 @@ const DEVICE_INFO: [DeviceInfo; 14] = [
 
 fn main() -> ocl::Result<()> {
     for platform in Platform::list() {
-        println!("Platform: {}", platform.name()?);
+        println!("Name: {}", platform.name()?);
+        println!("Vendor: {}", platform.vendor()?);
+        println!("Version: {}", platform.version()?);
+        println!("Profile: {}", platform.profile()?);
+
+        println!("");
+
+        println!("Extensions:");
+        for extension in platform.extensions()?.iter() {
+            println!("{}", extension);
+        }
+
+        println!("");
 
         println!("Devices: ");
         for device in Device::list_all(&platform)? {
-            println!("{}", device.name()?);
+            println!("\n{}", device.name()?);
             println!(
                 "Max WG: {}, IS AVAIL: {}",
                 device.max_wg_size()?,
@@ -40,16 +52,7 @@ fn main() -> ocl::Result<()> {
             for info_item in &DEVICE_INFO {
                 println!("{:?}: {}", info_item, device.info(*info_item)?);
             }
-
-            println!("\n");
         }
-
-        println!("Extensions:");
-        for extension in platform.extensions()?.iter() {
-            println!("{}", extension);
-        }
-
-        println!("");
     }
 
     Ok(())
